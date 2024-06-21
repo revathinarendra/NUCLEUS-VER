@@ -137,19 +137,52 @@
     }
 </script>
 
-
-
 <script>
-const answers = {
-    {% for question_id, question_data in result.items %}
-    "{{ question_id|slugify }}": {
-        "correct_option": "{{ question_data.correct_option }}",
-        "explanation": "{{ question_data.Explanation }}"
-    },
-    {% endfor %}
-};
+    // Define the answers object using Django template syntax
+    const answers = {
+        {% for question_id, question_data in result.items %}
+        "{{ question_id|slugify }}": {
+            "correct_option": "{{ question_data.correct_option|escapejs }}",
+            "explanation": "{{ question_data.Explanation|escapejs }}"
+        },
+        {% endfor %}
+    };
 
+    // Define the checkAnswer function
+    function checkAnswer(questionId) {
+        const selectedOption = document.querySelector(`input[name=${questionId}_option]:checked`);
+        const explanationElement = document.getElementById(`explanation_${questionId}`);
+        const explanationElementCard = document.getElementById('displayCard');
+        const correctOption = answers[questionId].correct_option;
+        const explanation = answers[questionId].explanation;
 
+        if (!selectedOption) {
+            alert("Please select an option.");
+            return;
+        }
+
+        if (selectedOption.value === correctOption) {
+            explanationElement.innerHTML = `<span style="color: green; font-size: 25px;">Correct!</span> ${explanation}`;
+        } else {
+            explanationElement.innerHTML = `<span style="color: red; font-size: 25px;">Incorrect.</span> ${explanation}`;
+        }
+
+        explanationElementCard.style.display = 'block';
+        explanationElement.style.display = "block";
+    }
+    </script>
+
+<!-- <script>
+    
+        const answers = {
+            {% for question_id, question_data in result.items %}
+            "{{ question_id|slugify }}": {
+                "correct_option": "{{ question_data.correct_option|escapejs }}",
+                "explanation": "{{ question_data.Explanation|escapejs }}"
+            },
+            {% endfor %}
+        };
+        
 function checkAnswer(questionId) {
     const selectedOption = document.querySelector(`input[name=${questionId}_option]:checked`);
     const explanationElement = document.getElementById(`explanation_${questionId}`);
@@ -171,6 +204,6 @@ function checkAnswer(questionId) {
     explanationElement.style.display = "block";
 }
 </script>
-
+ -->
 
 {% endblock %}

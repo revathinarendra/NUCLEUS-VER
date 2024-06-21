@@ -26,3 +26,4 @@ tzdata==2023.3
 zipp==3.17.0
 supabase
 psycopg2-binary==2.9.9
+django-environ
