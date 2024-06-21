@@ -1,0 +1,39 @@
+{% extends 'basemain.html' %} {% load static %} {% block content %}
+        <div class="main p-3">
+            <div class="">
+                <a href="{% url 'topic_tutor' subject_slug=subject.slug %}">
+                  <button class="hovered p-2 mb-2" 
+                style="border-width: 0px;
+                border-radius: 5px;">
+                 <i class="bi bi-arrow-left"></i>
+                </button>
+              </a>
+              </a>
+                </div>
+            <div class="d-flex justify-content-center mb-4 adjustSmallscreen" style="align-items: center;">
+                <h1>SUBTOPICS OF TOPIC: {{topic.topic_name}} RELATED TO SUBJECT: {{subject.subject_name}}</h1>
+            </div>
+            <div class="container">
+                <div class="row justify-content-center">
+                    {% for subtopic in subtopics %}
+                    <div class="col-12 col-md-11 mb-3">
+                        <div class="card shadow p-3 hovered ">
+                            <a href="{% url 'note' subject_slug=subject.slug topic_slug=topic.slug sub_topic_slug=subtopic.slug %}
+                            " style="color:black;">
+                                <div class="d-flex justify-content-between hovered " style="align-items: center;">
+                                   <div class= "d-flex pt-3">
+                                       <p><strong> {{ subtopic.sub_topic_name }}</strong>
+                                    </div>
+                                    <div class=" d-none d-md-block">
+                                        <i class="bi bi-chevron-right" ></i>
+                                    </div>  
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

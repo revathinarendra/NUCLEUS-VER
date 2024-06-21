@@ -1,0 +1,176 @@
+{% extends 'basemain.html' %}
+{% load static %}
+{% block content %}
+<div class="main p-3">
+    <div class="">
+        <a href="{% url 'subtopic_tutor' subject_slug=subject_slug topic_slug=topic_slug %}">
+          <button class="hovered p-2 mb-2" 
+        style="border-width: 0px;
+        border-radius: 5px;">
+         <i class="bi bi-arrow-left"></i>
+        </button>
+      </a>
+      
+        </div>
+<div class="container">
+    <div class="column justify-content-center">
+        <div class="col-12 text-center">
+            <p class="card p-3">{{ sub_topic_name }}</p>
+            <ul class="list-group">
+                {% for note in notes %}
+                    <li class="list-group-item">{{ note.note }}</li>
+                    <!-- <li class="list-group-item">{{ note.sub_topic_name.sub_topic_name }}</li> -->
+                {% empty %}
+                    <!-- <li class="list-group-item">No notes available.</li> -->
+                {% endfor %}
+                {% if user_notes %}
+                <textarea  class="form-control mb-3 mt-3"rows="5" placeholder="User notes...">{% if user_notes %}{{ user_notes.0 }}{% endif %}</textarea>
+                {% else %}
+                <p></p>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="col-12  mt-3">
+            <h2>Add Your Notes</h2>
+            
+            <form action="{% url 'note' subject_slug=subject_slug topic_slug=topic_slug sub_topic_slug=sub_topic_slug %}" method="post">
+                {% csrf_token %}
+                <textarea name="user_note" id="userNote" class="form-control"  placeholder="Save your note here..."></textarea>
+                <div class="d-flex justify-content-between">
+                <button type="submit" name="action" value="generate_mcq" class="btn btn-primary mt-2">Generate MCQs</button>
+                <div>
+                <button type="submit" name="action" value="add_note" class="btn btn-primary mt-2 mb-2">Save</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Clear 
+                </button>
+            </div>
+        </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Clear Note</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to clear the note?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" name="action" value="clear_note" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+                    
+        
+            
+        </div>
+    </div>
+    {% if result %}
+<h2 class=" mt-2 "> Generated MCQs</h2>
+
+<div id="quiz" class="col-12">
+    {% for question_id, question_data in result.items %}
+    <div class="question" id="{{ question_id|slugify }}" style="display: none;">
+        <p>{{ question_data.Question }}</p>
+        <ul class="options list-group">
+            {% for option_key, option_value in question_data.Options.items %}
+            <li class="list-group-item">
+                <input type="radio" id="{{ question_id|slugify }}_{{ option_key }}" name="{{ question_id|slugify }}_option" value="{{ option_key }}">
+                <label for="{{ question_id|slugify }}_{{ option_key }}"> {{ option_value }}</label>
+            </li>
+            {% endfor %}
+        </ul>
+        <button onclick="checkAnswer('{{ question_id|slugify }}')" class="btn btn-primary mt-2">Submit</button>
+
+        <div class="mt-2 card p-3" id="displayCard_{{ question_id|slugify }}" style="display: none;">
+            <p class="explanation" id="explanation_{{ question_id|slugify }}"></p>
+        </div>
+
+        <div class="navigation mt-2">
+            <button class="mt-1 mb-2 hovered btn p-2 text-center" onclick="showPrevious('{{ question_id|slugify }}')" style="width:100px; border-color: rgb(227, 227, 227);">
+                Prev
+            </button>
+            <button class="mt-1 mb-2 hovered btn p-2 text-center" onclick="showNext('{{ question_id|slugify }}')" style="width:100px; border-color: rgb(227, 227, 227);">
+                Next
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>No MCQs generated.</p>
+{% endif %}
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Show the first question by default
+        let questions = document.querySelectorAll('.question');
+        if (questions.length > 0) {
+            questions[0].style.display = 'block';
+        }
+    });
+
+    function showPrevious(currentQuestionId) {
+        let currentQuestion = document.getElementById(currentQuestionId);
+        let previousQuestion = currentQuestion.previousElementSibling;
+
+        if (previousQuestion && previousQuestion.classList.contains('question')) {
+            currentQuestion.style.display = 'none';
+            previousQuestion.style.display = 'block';
+        }
+    }
+
+    function showNext(currentQuestionId) {
+        let currentQuestion = document.getElementById(currentQuestionId);
+        let nextQuestion = currentQuestion.nextElementSibling;
+
+        if (nextQuestion && nextQuestion.classList.contains('question')) {
+            currentQuestion.style.display = 'none';
+            nextQuestion.style.display = 'block';
+        }
+    }
+</script>
+
+
+
+<script>
+const answers = {
+    {% for question_id, question_data in result.items %}
+    "{{ question_id|slugify }}": {
+        "correct_option": "{{ question_data.correct_option }}",
+        "explanation": "{{ question_data.Explanation }}"
+    },
+    {% endfor %}
+};
+
+
+function checkAnswer(questionId) {
+    const selectedOption = document.querySelector(`input[name=${questionId}_option]:checked`);
+    const explanationElement = document.getElementById(`explanation_${questionId}`);
+    const explanationElementCard = document.getElementById('displayCard');
+    const correctOption = answers[questionId].correct_option;
+    const explanation = answers[questionId].explanation;
+
+    if (!selectedOption) {
+        alert("Please select an option.");
+        return;
+    }
+
+    if (selectedOption.value === correctOption) {
+        explanationElement.innerHTML = `<span style="color: green; font-size:25px;">Correct!</span> ${explanation}`;
+    } else {
+        explanationElement.innerHTML = `<span style="color: red; font-size:25px">Incorrect.</span> ${explanation}`;
+    }
+    explanationElementCard.style.display='block'
+    explanationElement.style.display = "block";
+}
+</script>
+
+
+{% endblock %}

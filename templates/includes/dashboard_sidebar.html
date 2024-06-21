@@ -1,0 +1,35 @@
+<aside class="col-md-3 mb-3">
+  <!--   SIDEBAR   -->
+  <ul class="list-group card p-3" >
+    <a
+      class="btn btn-light mb-3 {% if '/accounts/' == request.path %}active{% endif %}"
+      href="{% url 'dashboard' %}"
+      style="text-decoration: none;"
+    >
+      Dashboard
+    </a>
+    <a
+      class="btn btn-light mb-3 {% if '/edit_profile/' in request.path %}active{% endif %}"
+      href="{% url 'edit_profile' %}"
+      style="text-decoration: none;"
+    >
+      Edit Profile
+    </a>
+    <a
+      class="btn btn-light mb-3 {% if '/change_password/' in request.path %}active{% endif %}"
+      href="{% url 'change_password' %}"
+      style="text-decoration: none;"
+    >
+      Change Password
+    </a>
+
+    <a class="btn btn-light" href="{% url 'logout' %}" style="text-decoration: none;">
+      Log out
+    </a>
+  </ul>
+  <!-- <br />
+  <a class="btn btn-light btn-block" href="{% url 'logout' %}">
+    <i class="fa fa-power-off"></i> <span class="text">Log out</span>
+  </a> -->
+  <!--   SIDEBAR .//END   -->
+</aside>

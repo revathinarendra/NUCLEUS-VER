@@ -1,0 +1,77 @@
+{% extends 'basemain.html' %}
+{% block content %}
+<div class="main">
+    <div class="container">
+        
+        <div class="row d-flex justify-content-center">
+            <div class="col-12 col-md-10">
+                {% if attempted_questions %}
+                <div class="d-flex justify-content-center card mt-3 mb-3">
+                    <p class="pt-3 text-center"> Attempted Questions  </p>
+                </div>
+
+                
+                {% for question in attempted_questions %}
+                <div class="card p-3 mb-3">
+                <p class="pt-3">{{ question.question }}</p>
+                <div class="options mt-4">
+                    <table class="table">
+                        <tbody>
+                        {% for option in question.options %}
+                        <tr>
+                            <td><p class="mb-0">{{ option }}</p></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="accordion mt-4" id="accordionPanelsStayOpenExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#panelsStayOpen-collapseOne{{ forloop.counter }}" aria-expanded="true"
+                                    aria-controls="panelsStayOpen-collapseOne{{ forloop.counter }}">
+                                Explanation
+                            </button>
+                        </h2>
+                        <div id="panelsStayOpen-collapseOne{{ forloop.counter }}" class="accordion-collapse collapse show"
+                             aria-labelledby="panelsStayOpen-headingOne{{ forloop.counter }}">
+                            <div class="accordion-body">
+                                {{ question.explanation }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+
+                {% endfor %}
+                <!-- Pagination Links -->
+                <div class="pagination mt-4">
+                    <span class="step-links">
+                        {% if attempted_questions.has_previous %}
+                            <a href="?page=1">&laquo; first</a>
+                            <a href="?page={{ attempted_questions.previous_page_number }}">previous</a>
+                        {% endif %}
+                        <span class="current">
+                            Page {{ attempted_questions.number }} of {{ attempted_questions.paginator.num_pages }}.
+                        </span>
+                        {% if attempted_questions.has_next %}
+                            <a href="?page={{ attempted_questions.next_page_number }}">next</a>
+                            <a href="?page={{ attempted_questions.paginator.num_pages }}">last &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+                <!-- End Pagination Links -->
+            </div>
+        </div>
+        {% else %}
+        <div class="container text-center d-flex flex-column d-none d-md-block" style="margin-top: 30%;">
+            <h1>Not Yet Attempted</h1>
+        </div>
+        <div class="container text-center d-flex flex-column  d-md-none" style="margin-top: 80%;">
+            <h1>Not Yet Attempted</h1>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
