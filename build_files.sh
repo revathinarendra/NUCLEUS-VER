@@ -1,6 +1,6 @@
 #!/bin/bash
  #Set the DJANGO_SETTINGS_MODULE environment variable
-export DJANGO_SETTINGS_MODULE=NUCLEUS-VERCEL.nucleus.settings
+export DJANGO_SETTINGS_MODULE=nucleus.settings
 # Ensure pip is available
 /usr/bin/python3.9 -m ensurepip --upgrade
 

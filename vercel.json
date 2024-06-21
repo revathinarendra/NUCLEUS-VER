@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "NUCLEUS-VERCEL/nucleus/wsgi.py",
+      "src": "/nucleus/wsgi.py",
       "use": "@vercel/python",
       "config": {
         "maxLambdaSize": "15mb",
@@ -24,7 +24,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "NUCLEUS-VERCEL/nucleus/wsgi.py"
+      "dest": "/nucleus/wsgi.py"
     }
   ]
 }
