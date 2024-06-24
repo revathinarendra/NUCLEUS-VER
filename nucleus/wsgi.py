@@ -14,3 +14,5 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nucleus.settings')
 
 application = get_wsgi_application()
+# Define an app object for the serverless platform
+app = application
