@@ -13,6 +13,9 @@ from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nucleus.settings')
 
+# Create a WSGI application
 application = get_wsgi_application()
-# Define an app object for the serverless platform
-app = application
+
+# Vercel requires a `handler` function to be exported
+def handler(event, context):
+    return application(event, context)
