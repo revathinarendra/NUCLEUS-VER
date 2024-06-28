@@ -13,7 +13,7 @@ from performance.forms import  ImportantQuestionForm,  DoubtQuestionForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-@method_decorator(login_required)
+@method_decorator(login_required, name='dispatch')
 class HomeView(TemplateView):
     template_name = 'homenew.html'
 
