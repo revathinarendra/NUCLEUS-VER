@@ -104,7 +104,7 @@ class SubTopicTutorListView(ListView):
         return context
 
 
-@login_required
+
 class NoteView(TemplateView):
     template_name = 'tutormode/note.html'
     def get_sub_topic_by_name(self, sub_topic_name):

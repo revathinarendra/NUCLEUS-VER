@@ -17,8 +17,6 @@ load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY",None)
 openai.api_key=api_key
 client = OpenAI(api_key=api_key)
-
-@login_required
 class PerformanceView(LoginRequiredMixin, View):
     template_name = 'performance/performance.html'
 
@@ -108,7 +106,7 @@ def get_attempted_questions(request):
     return render(request, 'home.html', {'attempted_questions': attempted_questions_page})
 
     
-@login_required
+
 class TopicPerformanceView(LoginRequiredMixin, View):
     template_name = 'performance/performance_topic.html'
 
