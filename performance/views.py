@@ -18,6 +18,7 @@ api_key = os.getenv("OPENAI_API_KEY",None)
 openai.api_key=api_key
 client = OpenAI(api_key=api_key)
 
+@login_required
 class PerformanceView(LoginRequiredMixin, View):
     template_name = 'performance/performance.html'
 
@@ -72,7 +73,7 @@ class PerformanceView(LoginRequiredMixin, View):
     def calculate_performance_percentage(self, correct_answers, total_questions):
         percentage = (correct_answers / total_questions) * 100 if total_questions else 0
         return round(percentage)
-  
+@login_required
 def get_attempted_questions(request):
     
     user_perf_instance = get_object_or_404(user_performance, user=request.user)
@@ -106,41 +107,8 @@ def get_attempted_questions(request):
 
     return render(request, 'home.html', {'attempted_questions': attempted_questions_page})
 
-
-# def get_attempted_questions(request):
-#     user_perf_instance = get_object_or_404(user_performance, user=request.user)
-#     attempted_questions_string = user_perf_instance.attempted_ques
-#     attempted_questions_list = [question_id for question_id in attempted_questions_string.split(';') if question_id.strip()]
-#     unique_attempted_questions = set(attempted_questions_list)
-
-#     # Fetch all attempted questions
-#     attempted_questions = Question.objects.filter(id__in=unique_attempted_questions)
-
-#     # Create a list to store attempted questions data
-#     attempted_questions_data = []
-
-#     # Loop through attempted questions to prepare data
-#     for question in attempted_questions:
-#         # Split opt_values by semicolon to get options
-#         options = question.opt_values.split(';')
-        
-#         attempted_question = {
-#             'id': question.id,
-#             'question': question.question,
-#             'options': options,
-#             'explanation': question.explanation,
-#         }
-#         attempted_questions_data.append(attempted_question)
-
-#     paginator = Paginator(attempted_questions_data, 10)  # Show 10 questions per page
-
-#     page_number = request.GET.get('page')
-#     attempted_questions_page = paginator.get_page(page_number)
-
-#     return render(request, 'home.html', {'attempted_questions': attempted_questions_page})
-
     
-    
+@login_required
 class TopicPerformanceView(LoginRequiredMixin, View):
     template_name = 'performance/performance_topic.html'
 
@@ -296,7 +264,7 @@ def correct_answer(question_id):
     correct_answer = correct_answers_dict.get('1', None)  # Assuming '1' is the correct option
     
     return correct_answer
-
+@login_required
 def get_important_questions(request):
     user_perf_instance = get_object_or_404(user_performance, user=request.user)
     important_questions_string = user_perf_instance.bookmark_ques

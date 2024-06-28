@@ -1,4 +1,4 @@
-from django.http import   JsonResponse
+from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.shortcuts import get_object_or_404
@@ -104,7 +104,7 @@ class SubTopicTutorListView(ListView):
         return context
 
 
-
+@login_required
 class NoteView(TemplateView):
     template_name = 'tutormode/note.html'
     def get_sub_topic_by_name(self, sub_topic_name):

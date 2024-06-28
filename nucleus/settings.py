@@ -134,46 +134,6 @@ else:
 # }
 
 
-# # Initialize environment variables
-# env = environ.Env()
-# environ.Env.read_env()  # Reads the .env file
-
-# # Get the environment
-# DJANGO_ENV = os.environ.get('DJANGO_ENV', default='local')
-
-# # Common settings
-# SUPABASE_URL = os.environ.get('SUPABASE_URL')
-# SUPABASE_ANON_KEY = os.environ.get('SUPABASE_ANON_KEY')
-
-# if DJANGO_ENV == 'local':
-#     # Local development settings
-#     DATABASES = {
-#         "default": {
-#             "ENGINE": "django.db.backends.postgresql",
-#             "NAME": os.environ.get("LOCAL_DB_NAME"),
-#             "USER": os.environ.get("LOCAL_DB_USER"),
-#             "PASSWORD": os.environ.get("LOCAL_DB_PASSWORD"),
-#             "HOST": os.environ.get("LOCAL_DB_HOST"),
-#             "PORT": os.environ.get("LOCAL_DB_PORT"),
-#         }
-#     }
-    
-# elif DJANGO_ENV == 'production':
-#     # Production settings
-#     DATABASES = {
-#         "default": {
-#             "ENGINE": "django.db.backends.postgresql",
-#             "NAME": os.environ.get("SUPBASE_DB_NAME"),
-#             "USER": os.environ.get("SUPBASE_DB_USER"),
-#             "PASSWORD": os.environ.get("SUPBASE_DB_PASSWORD"),
-#             "HOST": os.environ.get("SUPBASE_DB_HOST"),
-#             "PORT": os.environ.get("SUPBASE_DB_PORT"),
-#         }
-#     }
-    
-# else:
-#      raise ValueError(f"Unknown DJANGO_ENV: {DJANGO_ENV}")
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
