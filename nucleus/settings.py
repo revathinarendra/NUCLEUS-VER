@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import environ
+env = environ.Env()
+environ.Env.read_env()  # Reads the .env file
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,12 +25,11 @@ load_dotenv()
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = os.environ.get('DEBUG') == 'True'
+DEBUG = env.bool('DEBUG',default=False)
 ALLOWED_HOSTS = ["127.0.0.1", ".vercel.app", ".now.sh"]
 
 
@@ -83,6 +85,42 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'nucleus.wsgi.application'
 AUTH_USER_MODEL = 'Accounts.Account'
+import os
+import environ
+
+
+
+# Get the environment
+DJANGO_ENV = env('DJANGO_ENV', default='local').strip()
+# Common settings
+SUPABASE_URL = os.environ.get('SUPABASE_URL')
+SUPABASE_ANON_KEY = os.environ.get('SUPABASE_ANON_KEY')
+
+# Database settings
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST"),
+        "PORT": env("DB_PORT"),
+    }
+}
+
+# Additional settings can be customized based on DJANGO_ENV if needed
+if DJANGO_ENV == 'local':
+    # Local development-specific settings
+    DEBUG = True
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    
+elif DJANGO_ENV == 'production':
+    # Production-specific settings
+    DEBUG = False
+    ALLOWED_HOSTS = [".vercel.app"]
+    
+else:
+    raise ValueError(f"Unknown DJANGO_ENV: {DJANGO_ENV}")
 
 
 # Database
@@ -94,47 +132,47 @@ AUTH_USER_MODEL = 'Accounts.Account'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-import environ
 
-# Initialize environment variables
-env = environ.Env()
-environ.Env.read_env()  # Reads the .env file
 
-# Get the environment
-DJANGO_ENV = os.environ.get('DJANGO_ENV', default='local')
+# # Initialize environment variables
+# env = environ.Env()
+# environ.Env.read_env()  # Reads the .env file
 
-# Common settings
-SUPABASE_URL = os.environ.get('SUPABASE_URL')
-SUPABASE_ANON_KEY = os.environ.get('SUPABASE_ANON_KEY')
+# # Get the environment
+# DJANGO_ENV = os.environ.get('DJANGO_ENV', default='local')
 
-if DJANGO_ENV == 'local':
-    # Local development settings
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get("LOCAL_DB_NAME"),
-            "USER": os.environ.get("LOCAL_DB_USER"),
-            "PASSWORD": os.environ.get("LOCAL_DB_PASSWORD"),
-            "HOST": os.environ.get("LOCAL_DB_HOST"),
-            "PORT": os.environ.get("LOCAL_DB_PORT"),
-        }
-    }
+# # Common settings
+# SUPABASE_URL = os.environ.get('SUPABASE_URL')
+# SUPABASE_ANON_KEY = os.environ.get('SUPABASE_ANON_KEY')
+
+# if DJANGO_ENV == 'local':
+#     # Local development settings
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.postgresql",
+#             "NAME": os.environ.get("LOCAL_DB_NAME"),
+#             "USER": os.environ.get("LOCAL_DB_USER"),
+#             "PASSWORD": os.environ.get("LOCAL_DB_PASSWORD"),
+#             "HOST": os.environ.get("LOCAL_DB_HOST"),
+#             "PORT": os.environ.get("LOCAL_DB_PORT"),
+#         }
+#     }
     
-elif DJANGO_ENV == 'production':
-    # Production settings
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get("SUPBASE_DB_NAME"),
-            "USER": os.environ.get("SUPBASE_DB_USER"),
-            "PASSWORD": os.environ.get("SUPBASE_DB_PASSWORD"),
-            "HOST": os.environ.get("SUPBASE_DB_HOST"),
-            "PORT": os.environ.get("SUPBASE_DB_PORT"),
-        }
-    }
+# elif DJANGO_ENV == 'production':
+#     # Production settings
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.postgresql",
+#             "NAME": os.environ.get("SUPBASE_DB_NAME"),
+#             "USER": os.environ.get("SUPBASE_DB_USER"),
+#             "PASSWORD": os.environ.get("SUPBASE_DB_PASSWORD"),
+#             "HOST": os.environ.get("SUPBASE_DB_HOST"),
+#             "PORT": os.environ.get("SUPBASE_DB_PORT"),
+#         }
+#     }
     
-else:
-     raise ValueError(f"Unknown DJANGO_ENV: {DJANGO_ENV}")
+# else:
+#      raise ValueError(f"Unknown DJANGO_ENV: {DJANGO_ENV}")
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -171,10 +209,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-# Default primary key field type
+# Static files settings
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "public/static"),
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 MEDIA_URL = '/media/'
@@ -192,11 +232,14 @@ MESSAGE_TAGS = {
 }
 
 EMAIL_BACKEND = "backends.custom_email_backend.CustomEmailBackend"
-EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "your_default_email@gmail.com")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "your_default_password")
-EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True") == "True"
+# Email settings
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env.int('EMAIL_PORT')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS')
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
+
 
 # Sessions will expire after 2 weeks by default
 SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
