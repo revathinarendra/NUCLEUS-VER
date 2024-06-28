@@ -100,11 +100,11 @@ SUPABASE_ANON_KEY = os.environ.get('SUPABASE_ANON_KEY')
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("DB_NAME"),
-        "USER": env("DB_USER"),
-        "PASSWORD": env("DB_PASSWORD"),
-        "HOST": env("DB_HOST"),
-        "PORT": env("DB_PORT"),
+        "NAME": env("SUPBASE_DB_NAME"),
+        "USER": env("SUPBASE_DB_USER"),
+        "PASSWORD": env("SUPBASE_DB_PASSWORD"),
+        "HOST": env("SUPBASE_DB_HOST"),
+        "PORT": env("SUPBASE_DB_PORT"),
     }
 }
 
