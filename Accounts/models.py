@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
-from nucleus import settings  # Make sure to replace 'nucleus' with your app name if necessary
+from nucleus import settings  
 
 
 class MyAccountManager(BaseUserManager):

@@ -1,19 +1,16 @@
 from django.views.generic import View
-from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
+from django.contrib import auth,messages
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import EmailMessage
-from django.conf import settings
 from .forms import RegistrationForm, UserForm, UserProfileForm
 from .models import Account, UserProfile, Referral, Profession
-from pathlib import Path
-from django.contrib import auth
 from django.template.loader import render_to_string
+from django.views import View
 
 import logging
 
@@ -106,27 +103,6 @@ class RegisterView(View):
             print(f"Form errors: {form.errors}")  # Add this line to log form errors
             messages.error(request, "Form is not valid")
             return render(request, "accounts/register.html", {"form": form})
-
-
-# class LoginView(View):
-#     def get(self, request):
-#         return render(request, "accounts/login.html")
-
-#     def post(self, request):
-#         email = request.POST["email"]
-#         password = request.POST["password"]
-#         user = auth.authenticate(email=email, password=password)
-#         if user is not None:
-#             auth.login(request, user)
-#             messages.success(request, "You are now logged in.")
-#             return redirect('home_new')
-#         else:
-#             messages.error(request, "Invalid login credentials")
-#             return redirect("login")
-
-from django.shortcuts import redirect, render
-from django.contrib import auth, messages
-from django.views import View
 
 class LoginView(View):
     def get(self, request):
