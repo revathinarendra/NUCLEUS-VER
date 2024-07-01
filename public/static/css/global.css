@@ -361,19 +361,3 @@ font-size:15px;
 .bookmark i{
   color: rgba(245, 213, 4, 0.886);
 }
-.hovered {
-  /* Your basic button styles */
-  background-color: #f0f0f0;
-  color: #555;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-}
-/* Style for disabled buttons */
-.hovered.disabled {
-  background-color: #ddd; 
-  color: #888; 
-  border-color: #ccc; 
-  cursor: not-allowed; 
-  opacity: 0.6;
-}
