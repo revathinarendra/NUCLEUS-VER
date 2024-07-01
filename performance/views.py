@@ -8,6 +8,8 @@ from MCQS.models import Subject, Question,Topic,SubTopic
 from django.core.paginator import Paginator
 from django.views.generic import TemplateView
 from django.http import HttpResponseBadRequest
+from http.server import BaseHTTPRequestHandler
+
 from django.contrib.auth.decorators import login_required
 import openai,os
 from dotenv import load_dotenv

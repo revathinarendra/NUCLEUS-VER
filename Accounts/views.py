@@ -11,6 +11,8 @@ from .forms import RegistrationForm, UserForm, UserProfileForm
 from .models import Account, UserProfile, Referral, Profession
 from django.template.loader import render_to_string
 from django.views import View
+from http.server import BaseHTTPRequestHandler
+
 
 import logging
 

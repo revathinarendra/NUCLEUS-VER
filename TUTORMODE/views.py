@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from MCQS.models import SubTopic, Subject, Topic
 from .models import Note 
+from http.server import BaseHTTPRequestHandler
+
 from TUTORMODE.form import NoteForm
 import json 
 import openai,os
