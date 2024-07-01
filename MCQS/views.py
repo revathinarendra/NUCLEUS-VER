@@ -28,6 +28,7 @@ class SubjectView(ListView):
             subjects = Subject.objects.annotate(num_topics=Count('topic')) # Retrieve all subjects from the database
             return render(request, self.template_name, {'subjects': subjects})
 
+
 class TopicListView(ListView):
     model = Topic
     template_name = 'mcq/topic.html'
@@ -38,28 +39,23 @@ class TopicListView(ListView):
         return super().dispatch(*args, **kwargs)
 
     def get_queryset(self):
-        request = self.request
-        print("Request:", request)
         queryset = super().get_queryset()
-        print("Original queryset:", queryset) 
         subject_slug = self.kwargs.get('subject_slug')
-        print("Subject slug:", subject_slug) 
         if subject_slug:
             subject = get_object_or_404(Subject, slug=subject_slug)
             return queryset.filter(subject_name=subject).annotate(subtopic_count=Count('subtopic'))
         else:
             return queryset
-        
+
     def get_context_data(self, **kwargs):
-        print("Inside get_context_data method")  # Add this line for debugging
-    
         context = super().get_context_data(**kwargs)
         subject_slug = self.kwargs.get('subject_slug')
         if subject_slug:
-          subject = get_object_or_404(Subject, slug=subject_slug)
-          context['subject'] = subject
+            subject = get_object_or_404(Subject, slug=subject_slug)
+            context['subject'] = subject
         return context
-   
+
+
 
 class MCQQuizView(LoginRequiredMixin, View):
     template_name = 'mcq/mcq.html'
@@ -70,17 +66,13 @@ class MCQQuizView(LoginRequiredMixin, View):
         topic = get_object_or_404(Topic, slug=topic_slug)
         # Retrieve subtopics related to the topic
         sub_topics = SubTopic.objects.filter(topic_name=topic)
-        # Number of QUESTIONS PRESENT IN SUBTOPIC
-        for sub_topic in sub_topics:
-            question_count = Question.objects.filter(sub_topic_name=sub_topic).count()
-            sub_topic.question_count = question_count
-
+        
         # Retrieve questions for the topic
         questions = Question.objects.filter(sub_topic_name__topic_name=topic)
 
         # Validate question number
         if not questions.exists() or question_num > len(questions) or question_num < 1:
-            return redirect('subject_list')
+            return None  # Handle invalid question number scenario gracefully
 
         # Select the current question
         current_question = questions[question_num - 1]
@@ -103,12 +95,18 @@ class MCQQuizView(LoginRequiredMixin, View):
             'total_questions': len(questions),
             'feedback_color': feedback_color,
             'back_to_topics_url': back_to_topics_url,
+            'important_form': ImportantQuestionForm(),
+            'doubt_form': DoubtQuestionForm(),
         }
 
         return context
 
     def get(self, request, topic_slug, question_num):
         context = self.get_context(request, topic_slug, question_num)
+        if context is None:
+            subject_slug = topic_slug  
+            return redirect('subject_list')  # Redirect to subject
+
         return render(request, self.template_name, context)
 
     def correct_answer(self, question_id):
@@ -139,11 +137,17 @@ class MCQQuizView(LoginRequiredMixin, View):
             user_history.save()
 
         context = self.get_context(request, topic_slug, question_num)
-        context['correct_ans'] = correct_ans
-        context['feedback_color'] = feedback_color
-        context['selected_option'] = selected_option
-        context['question_id'] = question_id
-        context['messages'] = messages.get_messages(request)
+        if context is None:
+            subject_slug = topic_slug  
+            return redirect('subject_list')  # Redirect  subject
+
+        context.update({
+            'correct_ans': correct_ans,
+            'feedback_color': feedback_color,
+            'selected_option': selected_option,
+            'question_id': question_id,
+            'messages': messages.get_messages(request),
+        })
 
         # Handling bookmark question form submission
         if 'important_form' in request.POST:
@@ -160,8 +164,8 @@ class MCQQuizView(LoginRequiredMixin, View):
                 user_history.revise_ques += question_ids + ";"
                 user_history.save()
 
-        context['important_form'] = ImportantQuestionForm()
-        context['doubt_form'] = DoubtQuestionForm()
+        context['important_form'] = important_form if 'important_form' in locals() else ImportantQuestionForm()
+        context['doubt_form'] = doubt_form if 'doubt_form' in locals() else DoubtQuestionForm()
 
         return render(request, self.template_name, context)
 

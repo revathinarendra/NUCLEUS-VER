@@ -15,25 +15,51 @@
           <div class="col-12 col-md-9 col-lg-10">
             <div class="d-flex justify-content-between shadow mt-3 p-2 pb-1" style="align-items: center;">
               <div class="d-flex" style="align-items: center;"> 
-              <button class="mt-1 mb-2 hovered btn p-2 text-center" onclick="location.href='{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num|add:'-1' %}'" style= "width:100px; border-color: rgb(227, 227, 227);">
-                Prev
-              </button>
-              <p  class=" m-3">Question  {{ question_num }} of {{ total_questions }}</p>
-              </div>
-              <div class="d-flex" style="align-items: center;">
-              <button type="button" class=" p-2  mt-3 mb-3 addImportantButton" id="bookmark"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Bookmark"  value="{{ current_question.id }}"
-              style="border-width: 0px;
-                 background-color: transparent;" >
-                <i class="bi bi-bookmark "></i> 
-            </button>
-            <button class=" p-2  m-3 addDoubtButton" id="revise" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Revise" value="{{ current_question.id }}"
-               style="border-width: 0px;
-                 background-color: transparent;">
-         <i class="bi bi-flag"></i>
-                </button>
-              <button class="mt-1 mb-2 hovered btn p-2 text-center" onclick="location.href='{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num|add:'1' %}'" style= "width:100px; border-color: rgb(227, 227, 227);">
-                Next
-              </button>
+                
+                    {% if question_num == 1 %}
+                        <button class="mt-1 mb-2 disabled hovered btn p-2 text-center"
+                               
+                                style="width:100px; border-color: rgb(227, 227, 227);">
+                            Prev
+                        </button>
+                    {% else %}
+                        <button class="mt-1 mb-2 hovered btn p-2 text-center "
+                                onclick="location.href='{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num|add:'-1' %}'"
+                                style="width:100px; border-color: rgb(227, 227, 227);">
+                            Prev
+                        </button>
+                    {% endif %}
+                    <p class="m-3">Question {{ question_num }} of {{ total_questions }}</p>
+                </div>
+                <div class="d-flex" style="align-items: center;">
+                    <div class="d-flex" style="align-items: center;">
+                        <button type="button" class=" p-2  mt-3 mb-3 addImportantButton" id="bookmark"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Bookmark"  value="{{ current_question.id }}"
+                        style="border-width: 0px;
+                           background-color: transparent;" >
+                          <i class="bi bi-bookmark "></i> 
+                      </button>
+                      <button class=" p-2  m-3 addDoubtButton" id="revise" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Revise" value="{{ current_question.id }}"
+                         style="border-width: 0px;
+                           background-color: transparent;">
+                   <i class="bi bi-flag"></i>
+                          </button>
+                    {% if question_num < total_questions %}
+                        <button class="mt-1 mb-2  hovered btn p-2 text-center"
+                                onclick="location.href='{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num|add:'1' %}'"
+                                style="width:100px; border-color: rgb(227, 227, 227);">
+                            Next
+                        </button>
+                    {% else %}
+                        <button class="mt-1 mb-2 hovered btn p-2 text-center disabled"
+                                style="width:100px; border-color: rgb(227, 227, 227);">
+                            Next
+                        </button>
+                    {% endif %}
+                </div>
+                
+                
+
+                
               </div>
               
             </div>
@@ -421,6 +447,8 @@
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 </script>
+
+
 {% endblock %}
 
 
