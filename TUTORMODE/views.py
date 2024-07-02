@@ -33,6 +33,9 @@ class SubjectTutorView(ListView):
        if request.method == 'GET':
             subjects = Subject.objects.annotate(num_topics=Count('topic')) # Retrieve all subjects from the database
             return render(request, self.template_name, {'subjects': subjects})
+       
+
+
 class TopicTutorListView(ListView):
     model = Topic
     template_name = 'tutormode/topic_tutor.html'
@@ -54,16 +57,16 @@ class TopicTutorListView(ListView):
             return queryset.filter(subject_name=subject).annotate(subtopic_count=Count('subtopic'))
         else:
             return queryset
-        
+
     def get_context_data(self, **kwargs):
         print("Inside get_context_data method")  
-    
         context = super().get_context_data(**kwargs)
         subject_slug = self.kwargs.get('subject_slug')
         if subject_slug:
           subject = get_object_or_404(Subject, slug=subject_slug)
           context['subject'] = subject
         return context
+
 
 class SubTopicTutorListView(ListView):
     model = SubTopic
@@ -336,6 +339,6 @@ and a brief explanation of why the option is correct.Don't include anything othe
             subtopic = SubTopic.objects.get(slug=sub_topic_slug)
             return subtopic
         except SubTopic.DoesNotExist:
-            return None  # or handle this case as needed
+            return None  
 
         
